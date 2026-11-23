@@ -4,7 +4,7 @@
  * pi has no MCP support by design ("build an extension"), so this extension
  * starts the bundled jobs-mcp server over stdio, asks it for its tools, and
  * registers each one as a native pi tool under the same name
- * (list_board_jobs, get_job, linkedin_search, scan). The skills in ../skills
+ * (list_board_jobs, get_job, linkedin_search, scan, signals). The skills in ../skills
  * refer to those names, so they work unchanged under pi.
  *
  * Server command, in order of precedence:

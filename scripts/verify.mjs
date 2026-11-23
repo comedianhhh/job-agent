@@ -37,7 +37,7 @@ const LIVE_BOARDS = [
   { spec: 'ashby:cohere', probe: 'https://api.ashbyhq.com/posting-api/job-board/cohere' },
   { spec: 'smartrecruiters:Ubisoft2', probe: 'https://api.smartrecruiters.com/v1/companies/Ubisoft2/postings?limit=1' },
 ];
-const EXPECTED_TOOLS = ['get_job', 'linkedin_search', 'list_board_jobs', 'scan'];
+const EXPECTED_TOOLS = ['get_job', 'linkedin_search', 'list_board_jobs', 'scan', 'signals'];
 
 const results = [];
 const meta = { run: RUN, startedAt: new Date().toISOString(), all: ALL };
@@ -160,7 +160,7 @@ async function liveStage() {
   }
   record('mcp', 'packaged jobs-mcp starts over stdio', 'PASS');
   const names = (await client.listTools()).tools.map((t) => t.name).sort();
-  record('mcp', 'exposes exactly the four tools', JSON.stringify(names) === JSON.stringify(EXPECTED_TOOLS) ? 'PASS' : 'FAIL', { why: names.join(',') });
+  record('mcp', `exposes exactly the ${EXPECTED_TOOLS.length} tools`, JSON.stringify(names) === JSON.stringify(EXPECTED_TOOLS) ? 'PASS' : 'FAIL', { why: names.join(',') });
 
   const call = async (name, args) => {
     const r = await withTimeout(client.callTool({ name, arguments: args }), 90_000, name);
@@ -200,6 +200,14 @@ async function liveStage() {
   calls.push({ tool: 'linkedin_search', ok: li.ok, count: li.count, error: li.error });
   record('live', `linkedin_search${li.ok ? ` (${li.count} jobs)` : ''}`, li.ok && li.count > 0 ? 'PASS' : li.ok || !['BAD_INPUT'].includes(li.error?.code) ? 'BLOCKED' : 'FAIL',
     { why: li.ok ? 'no results' : JSON.stringify(li.error) });
+
+  // hiring signals: two public feeds; an upstream problem is BLOCKED, a broken parser (0 items from a live feed) is FAIL
+  for (const source of ['hn', 'funding']) {
+    const s = await call('signals', { sources: [source], days: 0, limit: 5 });
+    calls.push({ tool: 'signals', source, ok: s.ok, count: s.count, scanned: s.scanned, error: s.error });
+    record('live', `signals ${source}${s.ok ? ` (${s.scanned} scanned)` : ''}`, s.ok && s.count > 0 ? 'PASS' : !s.ok && s.error?.retryable ? 'BLOCKED' : 'FAIL',
+      { why: s.ok ? 'no items parsed' : JSON.stringify(s.error) });
+  }
 
   writeFileSync(join(LOGS, 'live-calls.json'), JSON.stringify(calls, null, 2));
   writeFileSync(join(LOGS, 'mcp-stderr.log'), stderr);

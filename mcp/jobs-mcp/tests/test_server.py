@@ -34,7 +34,7 @@ def assert_error(res: dict, code: str) -> dict:
 
 def test_all_tools_registered():
     names = {t.name for t in asyncio.run(server.mcp.list_tools())}
-    assert names == {"list_board_jobs", "get_job", "linkedin_search", "scan"}
+    assert names == {"list_board_jobs", "get_job", "linkedin_search", "scan", "signals"}
 
 
 def test_tool_call_returns_envelope_not_mcp_error(mock_http):

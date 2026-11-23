@@ -15,6 +15,16 @@ linkedin:
 browser_sources:
   - { name: wellfound, url: "https://wellfound.com/jobs", max_results: 30 }
 
+# Hiring signals (jobs-mcp `signals`): companies hiring before a role reaches a board — the HN
+# "Who is hiring?" thread and startup funding news. /offer runs it weekly; see "Hiring signals" there.
+signals:
+  sources: [hn, funding]
+  days: 30
+  location_regex: "Toronto|Ontario|Canada|REMOTE \\((?:global|worldwide|anywhere|north america|americas)"
+  include_regex: "python|typescript|backend|full[- ]?stack|agent|LLM|AI"
+  exclude_regex: "crypto|web3"
+  rounds: "pre-seed|seed|series a|series b"   # funding rounds worth a direct note; later rounds usually post on a board
+
 filters:
   hours: 24
   include_regex: "engineer|developer"

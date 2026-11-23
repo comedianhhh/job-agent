@@ -10,6 +10,7 @@ MCP server that lets an agent scan public job boards. No API keys — it uses th
 | `get_job` | `board`, `job_id` | one posting with plain-text description (Ashby includes the compensation summary when published); `board: "linkedin"` with a posting id or any LinkedIn job URL reads LinkedIn's public job page |
 | `linkedin_search` | `keywords`, `location`, `hours?`, `limit?`, `remote_only?` | LinkedIn guest search: title / company / location / url / posted date |
 | `scan` | `boards_?`, `linkedin_queries?`, `hours?`, `include_regex?`, `exclude_regex?`, `location_regex?`, `limit?`, `rank_query?` | one deduplicated, filtered list across all sources, plus per-source `source_errors`; with `rank_query`, sorted best-first with `match_score` / `match_terms` |
+| `signals` | `sources?` (`hn`, `funding`), `days?`, `include_regex?`, `exclude_regex?`, `location_regex?`, `include_vc_funds?`, `limit?` | hiring signals before a posting exists: one item per company post in the latest HN "Who is hiring?" thread, and BetaKit funding news (Canadian startups that just raised, with `round` / `amount`). Text goes through the posting guard; `company` is parsed from free text |
 
 Every job is `{source, board, id, title, company, location, remote, url, posted_at, description, backend}`, where `backend` is what served it: `greenhouse-api`, `lever-api`, `ashby-api` or `linkedin-guest`.
 
@@ -57,6 +58,9 @@ Tool-specific fields sit next to the envelope:
 - `get_job`: `items[0]` is the posting.
 - `linkedin_search`: `warnings` (e.g. a later page was throttled and the result is partial).
 - `scan`: `scanned`, `source_errors` (one `{source, code, message, hint, retryable}` per failed board or LinkedIn query), `warnings`, `ranked_by` when ranking; `attempts` entries carry their `source`. A failing source never fails the scan — `ok` is `false` only when **every** source failed. For callers written before the envelope, `jobs` (same list as `items`) and `errors` (`"<source>: <message> [CODE]"` strings) are still returned.
+- `signals`: `scanned`, `source_errors` (per failed source, `hn` or `funding`); items are `{source, kind, id, company, title, location, url, posted_at, summary, integrity}`, `kind` being `hiring_post`, `funding` or `vc_fund` (dropped unless `include_vc_funds`). Same rule: `ok` is `false` only when every source failed.
+
+HTTPS goes through the operating system's certificate store (`truststore`), so antivirus HTTPS scanning or a corporate proxy that re-signs traffic does not break a source.
 
 ## Run
 

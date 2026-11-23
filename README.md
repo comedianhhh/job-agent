@@ -28,7 +28,7 @@ Five parts:
 | `/great-resume` | Positioning, summary, bullet rewrites, LinkedIn note / cold email / referral ask. |
 | `/make-resume` | One-page Letter resume + cover letter for one role. A second agent (`application-reviewer`) critiques the drafts as the hiring manager before export; then three deterministic gates: every number traceable to `facts.md` (`check-trace.py`), one page (overflow cut by relevance with `rank-cuts.py`, not by age), and the PDF's text layer read the way an ATS reads it (`check-ats.py`). |
 | `/job-apply` | Fills the application in your browser from `answers.yaml`, stops before Submit (or not — your policy), records it. |
-| `/offer` | Pipeline in `tracker.md`; mailbox triage; daily scan of your target boards via jobs-mcp, plus signed-in sites (Wellfound, Workable) read in your own browser; regenerates `calibration.md` when outcomes land. |
+| `/offer` | Pipeline in `tracker.md`; mailbox triage; daily scan of your target boards via jobs-mcp, plus signed-in sites (Wellfound, Workable) read in your own browser; a weekly hiring-signals list (HN "Who is hiring?", startup funding news) of companies to contact before they post; regenerates `calibration.md` when outcomes land. |
 | `/interview` | Predict → grill (one question at a time, scoring contracts) → review → retry. NA round structure. |
 
 **Build track**
@@ -39,7 +39,7 @@ Five parts:
 | `/project-guide` | Turns a repo into a lesson-by-lesson course, or your project into `guide-` + `interview-` files (pillar bullets, 15–25 questions, STAR answers). |
 | `/evidence-recap` | Turns an AI coding session into a nine-part evidence chain; confirmed facts flow into `facts.md`. |
 
-**jobs-mcp** — `list_board_jobs`, `get_job`, `linkedin_search`, `scan`. No API keys; these are the public endpoints the career pages use. `scan(rank_query=...)` ranks postings against your profile with BM25, plus local embeddings fused by RRF when the optional `rank` extra is installed. Every fetched description goes through the posting guard first (`jobs_mcp/guard.py`): hidden HTML and invisible Unicode are removed, text spelled in tag characters or variation selectors is decoded, instruction-shaped lines are quoted, and the result is attached as `integrity`. Plain tag stripping would have turned hidden text into visible text for the model.
+**jobs-mcp** — `list_board_jobs`, `get_job`, `linkedin_search`, `scan`, `signals`. No API keys; these are the public endpoints the career pages use. `scan(rank_query=...)` ranks postings against your profile with BM25, plus local embeddings fused by RRF when the optional `rank` extra is installed. `signals` finds companies hiring before a posting exists: the monthly HN "Who is hiring?" thread and startup funding news (BetaKit), which `/offer` turns into a weekly list of companies to contact directly. Every fetched description goes through the posting guard first (`jobs_mcp/guard.py`): hidden HTML and invisible Unicode are removed, text spelled in tag characters or variation selectors is decoded, instruction-shaped lines are quoted, and the result is attached as `integrity`. Plain tag stripping would have turned hidden text into visible text for the model.
 
 **Graphs** (`graph/`, optional, Python + LangGraph) — two flows where the model fills each node and deterministic code decides every edge:
 
@@ -72,7 +72,7 @@ pi install npm:@alanstill9966/job-agent-skills
 pi install git:github.com/comedianhhh/job-agent
 ```
 
-Skills load as `/skill:job-match`, `/skill:offer`, … (or the model picks them up on its own). pi has no MCP support by design, so the bundled extension ([extensions/jobs-mcp.ts](extensions/jobs-mcp.ts)) starts jobs-mcp over stdio at session start and registers its four tools natively — `list_board_jobs`, `get_job`, `linkedin_search`, `scan`. It needs `uv` on PATH; set `JOBS_MCP_COMMAND=jobs-mcp` to use a `pip install -e mcp/jobs-mcp` install instead. If the server cannot start, pi shows a warning and the skills still load.
+Skills load as `/skill:job-match`, `/skill:offer`, … (or the model picks them up on its own). pi has no MCP support by design, so the bundled extension ([extensions/jobs-mcp.ts](extensions/jobs-mcp.ts)) starts jobs-mcp over stdio at session start and registers its five tools natively — `list_board_jobs`, `get_job`, `linkedin_search`, `scan`, `signals`. It needs `uv` on PATH; set `JOBS_MCP_COMMAND=jobs-mcp` to use a `pip install -e mcp/jobs-mcp` install instead. If the server cannot start, pi shows a warning and the skills still load.
 
 ### Manual
 

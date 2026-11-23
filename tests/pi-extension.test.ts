@@ -14,7 +14,7 @@ const fakePi = {
 await extension(fakePi);
 
 assert.ok(!handlers.has("session_start"), "extension reported a startup error instead of registering tools");
-assert.deepEqual([...tools.keys()].sort(), ["get_job", "linkedin_search", "list_board_jobs", "scan"]);
+assert.deepEqual([...tools.keys()].sort(), ["get_job", "linkedin_search", "list_board_jobs", "scan", "signals"]);
 for (const t of tools.values()) {
 	assert.equal(t.parameters.type, "object", `${t.name}: parameters must be a JSON-Schema object`);
 	assert.ok(t.description.length > 10, `${t.name}: missing description`);

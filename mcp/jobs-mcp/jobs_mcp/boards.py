@@ -45,8 +45,23 @@ class Job(TypedDict, total=False):
     backend: str  # greenhouse-api | lever-api | ashby-api | smartrecruiters-api | linkedin-guest
 
 
+def _verify() -> Any:
+    """Trust the operating system's certificate store when `truststore` is installed (it is a
+    dependency). Antivirus HTTPS scanning and corporate proxies re-sign traffic with a root that
+    only the OS knows; certifi's bundle rejects it as a self-signed chain."""
+    try:
+        import ssl
+
+        import truststore
+    except ImportError:
+        return True
+    return truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+
+
 def _client() -> httpx.Client:
-    return httpx.Client(headers={"User-Agent": USER_AGENT}, timeout=TIMEOUT, follow_redirects=True)
+    return httpx.Client(
+        headers={"User-Agent": USER_AGENT}, timeout=TIMEOUT, follow_redirects=True, verify=_verify()
+    )
 
 
 def _described(raw: str | None, is_html: bool | None = None) -> dict[str, Any]:
