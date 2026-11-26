@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: ingestion-case-study
+context:
+  scaffold_script: fixture.sh

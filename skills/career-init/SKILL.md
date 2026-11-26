@@ -14,7 +14,7 @@ Create `career/` in the current project (or the path the user gives) from this p
 3. Fill `career/facts.md` interactively, one section at a time: basics, work authorization, education, each job (title, stack, dates, verifiable anchors, then facts with numbers). Write `TODO:` where the user is unsure. Do not polish wording here — this file is facts, not prose.
 4. Fill `career/answers.yaml`: identity, authorization (sponsorship yes/no now and in future), years of experience (default and excluding internships), work model, salary floor, EEO choices (blank = prefer not to say), and the policy block (`submit_without_confirmation`, portals the user handles themselves, max roles per company).
 5. Point `career/targets.yaml` at the boards the user cares about (`greenhouse:<token>`, `lever:<company>`, `ashby:<org>`, `smartrecruiters:<company id>`) and one or two LinkedIn queries.
-6. Finish with the sequence: `/job-match → /make-resume → /job-apply → /offer`, then `/interview` when a screen lands; `/great-resume` to strengthen bullets; `/contributor`, `/project-guide`, `/evidence-recap` for the build track.
+6. Finish with the sequence: `/job-match → /make-resume → /job-apply → /offer`, then `/interview` when a screen lands; `/great-resume` to strengthen bullets; `/linkedin-profile` and `/case-study` for the public profile; `/contributor`, `/project-guide`, `/evidence-recap` for the build track.
 
 ## Rules
 

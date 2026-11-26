@@ -1,6 +1,6 @@
 # Skill evals
 
-Behavioural tests for the ten skills, in the format [`claude plugin eval`](https://code.claude.com/docs/en/plugin-evals) runs: one directory per case with a `prompt.md` (what a user would type) and `graders/*.md` (pass/fail checks on the reply, the transcript, or files created). Each case runs three times with the plugin and three times without, so the report shows what the skills actually contribute (`Δ`), not just whether Claude can do the task on its own.
+Behavioural tests for the twelve skills, in the format [`claude plugin eval`](https://code.claude.com/docs/en/plugin-evals) runs: one directory per case with a `prompt.md` (what a user would type) and `graders/*.md` (pass/fail checks on the reply, the transcript, or files created). Each case runs three times with the plugin and three times without, so the report shows what the skills actually contribute (`Δ`), not just whether Claude can do the task on its own.
 
 ```
 evals/
@@ -14,7 +14,7 @@ evals/
 └── run.sh                   the same command CI uses
 ```
 
-## What the 26 cases check
+## What the 28 cases check
 
 | Skill | Case | The behaviour under test |
 |---|---|---|
@@ -30,6 +30,8 @@ evals/
 | interview | `cheat-sheet-keywords-from-tracker` | `05-Cheat-Sheet.md` written as a keyword table with hints in the user's language (Chinese prompt), no 11+-word English sentences, interview date taken from `tracker.md` (set only there by `fixture.sh`), no `TODO:` ~40 ms p95 |
 | evidence-recap | `nine-parts-prototype-stage` | Nine parts; stage = staging; AI-written vs user actions separated; unmeasured effect stays missing evidence |
 | evidence-recap | `refuses-to-inflate-stage` | "Make it sound shipped to 10k users" → stays staging, 10k stays an estimate |
+| linkedin-profile | `headline-about-from-facts` | Headline ≤ 220 chars, About opens with a real result, no `TODO:` p95, team uptime not personal, ledger-lite stays personal |
+| case-study | `ingestion-case-study` | Written to the named path; a decision with the option it rejected; the duplicate incident as what broke; only sourced numbers; follow-up questions |
 | offer | `rejection-email-updates-row` | Right row → `REJECTED` with stage; other rows untouched |
 | offer | `receipt-is-applied-not-screen` | Auto-receipt → `APPLIED`, follow-up dated ~10 business days out |
 | offer | `scan-without-jobs-mcp` | No MCP in the run → says so, gives manual board URLs, invents no postings |
@@ -47,7 +49,7 @@ evals/
 
 Every case also has `skill-fired` (`tool_used: Skill` on the right skill), which the harness reports as an indicator rather than scoring, so `Δ` is not inflated by the without-arm never being able to invoke a skill.
 
-Grader mix: 136 graders; 112 are free (`regex`, `tool_used`, `file_exists`) and 24 are `llm` rubrics written as explicit PASS / FAIL conditions, at most one per case, weighted 2–3 because they carry the honesty checks (no invented facts, no stage inflation, no claimed submissions).
+Grader mix: 146 graders; 120 are free (`regex`, `tool_used`, `file_exists`) and 26 are `llm` rubrics written as explicit PASS / FAIL conditions, at most one per case, weighted 2–3 because they carry the honesty checks (no invented facts, no stage inflation, no claimed submissions).
 
 **Writing an `llm` grader: the judge sees only the rubric and the reply, never the workspace.** If the rubric says "FAIL if it invents facts", the judge has to be able to check that from the rubric itself, or it votes FAIL whenever it can't confirm something. Give it the source text the reply is allowed to use **verbatim, not summarised**: a summary drops details, and a correct reply that quotes a dropped detail fails. Don't paste by hand. Put a `<!-- fixture-sources: facts.md blocks.md … -->` … `<!-- /fixture-sources -->` block in the rubric, and `python evals/sync_fixtures.py` fills it from `_fixtures/career`. `validate.py` fails when a block goes stale. Also say what does *not* count: rewording, standard technical names, and "must cover" expectations are not invented facts. Then check the rubric both ways: a good reply PASSes, and the same reply with one invented fact FAILs. `interview/predict-questions-for-acme` and `great-resume/rewrite-bullets-from-facts` were rewritten this way (2026-11-12), after a correct reply failed 3/3 for quoting real facts the rubric didn't contain.
 
