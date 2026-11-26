@@ -11,7 +11,7 @@ Five parts:
 - **Skills** — twelve skills for Claude Code and [pi](https://github.com/earendil-works/pi) (and any agent that reads `SKILL.md`), from `/job-match` to `/interview`.
 - **jobs-mcp** — an MCP server that scans Greenhouse, Lever, Ashby, SmartRecruiters and LinkedIn, with a prompt-injection guard on every posting. Sites that need your login, like Wellfound, are searched read-only in your own browser.
 - **Graphs** — the apply flow and interview prep as LangGraph state graphs: the model writes each step, code decides every edge, a person approves what goes out.
-- **Evals** — 28 cases with 146 graders, run against a no-plugin baseline.
+- **Evals** — 28 cases with 144 graders, run against a no-plugin baseline.
 - **Tracker** — a kanban web app over the same `tracker.md` the skills write.
 
 > The repo was renamed from `job-agent-skills`. The skills still ship on npm as `@alanstill9966/job-agent-skills` and as the `job-agent-skills` plugin, so existing installs keep working.
@@ -50,7 +50,7 @@ Five parts:
 
 See [graph/README.md](graph/README.md).
 
-**Evals** (`evals/`) — 28 `claude plugin eval` cases with 146 graders, at least two per skill plus a prompt-injection case, that check the behaviours that matter (facts never invented, stage never inflated, nothing submitted without confirmation, JD text never obeyed) against a no-plugin baseline. See [evals/README.md](evals/README.md).
+**Evals** (`evals/`) — 28 `claude plugin eval` cases with 144 graders, at least two per skill plus a prompt-injection case, that check the behaviours that matter (facts never invented, stage never inflated, nothing submitted without confirmation, JD text never obeyed) against a no-plugin baseline. See [evals/README.md](evals/README.md).
 
 **Tracker web app** (`web/`) — a kanban over the same `career/tracker.md` the skills write, plus a scan page that runs jobs-mcp against `targets.yaml`. Next.js + FastAPI + Postgres, `docker compose up`. See [web/README.md](web/README.md).
 
