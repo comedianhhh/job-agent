@@ -5,7 +5,7 @@
     {
       "name": "job-agent-skills",
       "source": "./",
-      "description": "Job-search workflow for coding agents (North America): /career-init, /job-match, /great-resume, /make-resume, /job-apply, /offer, /interview, /contributor, /project-guide, /evidence-recap + jobs-mcp.",
+      "description": "Job-search workflow for coding agents (North America): /career-init, /job-match, /great-resume, /make-resume, /job-apply, /offer, /interview, /linkedin-profile, /case-study, /contributor, /project-guide, /evidence-recap + jobs-mcp.",
       "version": "0.1.1"
     }
   ]

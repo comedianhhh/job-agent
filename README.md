@@ -8,10 +8,10 @@ It is built around one rule: **every line that goes out traces to a fact you wro
 
 Five parts:
 
-- **Skills** — ten skills for Claude Code and [pi](https://github.com/earendil-works/pi) (and any agent that reads `SKILL.md`), from `/job-match` to `/interview`.
+- **Skills** — twelve skills for Claude Code and [pi](https://github.com/earendil-works/pi) (and any agent that reads `SKILL.md`), from `/job-match` to `/interview`.
 - **jobs-mcp** — an MCP server that scans Greenhouse, Lever, Ashby, SmartRecruiters and LinkedIn, with a prompt-injection guard on every posting. Sites that need your login, like Wellfound, are searched read-only in your own browser.
 - **Graphs** — the apply flow and interview prep as LangGraph state graphs: the model writes each step, code decides every edge, a person approves what goes out.
-- **Evals** — 26 cases with 136 graders, run against a no-plugin baseline.
+- **Evals** — 28 cases with 146 graders, run against a no-plugin baseline.
 - **Tracker** — a kanban web app over the same `tracker.md` the skills write.
 
 > The repo was renamed from `job-agent-skills`. The skills still ship on npm as `@alanstill9966/job-agent-skills` and as the `job-agent-skills` plugin, so existing installs keep working.
@@ -30,6 +30,8 @@ Five parts:
 | `/job-apply` | Fills the application in your browser from `answers.yaml`, stops before Submit (or not — your policy), records it. |
 | `/offer` | Pipeline in `tracker.md`; mailbox triage; daily scan of your target boards via jobs-mcp, plus signed-in sites (Wellfound, Workable) read in your own browser; a weekly hiring-signals list (HN "Who is hiring?", startup funding news) of companies to contact before they post; regenerates `calibration.md` when outcomes land. |
 | `/interview` | Predict → grill (one question at a time, scoring contracts) → review → retry. NA round structure. |
+| `/linkedin-profile` | Headline, About, experience, skills order, Featured picks and Open-to-Work settings from `facts.md`, with character counts and a resume-sync check. |
+| `/case-study` | One project as a portfolio case study: problem, constraints, decisions with the options rejected, what broke, sourced results, hindsight; plus the follow-up questions it invites. Numbers go through `check-trace.py`. |
 
 **Build track**
 
@@ -48,7 +50,7 @@ Five parts:
 
 See [graph/README.md](graph/README.md).
 
-**Evals** (`evals/`) — 26 `claude plugin eval` cases with 136 graders, at least two per skill plus a prompt-injection case, that check the behaviours that matter (facts never invented, stage never inflated, nothing submitted without confirmation, JD text never obeyed) against a no-plugin baseline. See [evals/README.md](evals/README.md).
+**Evals** (`evals/`) — 28 `claude plugin eval` cases with 146 graders, at least two per skill plus a prompt-injection case, that check the behaviours that matter (facts never invented, stage never inflated, nothing submitted without confirmation, JD text never obeyed) against a no-plugin baseline. See [evals/README.md](evals/README.md).
 
 **Tracker web app** (`web/`) — a kanban over the same `career/tracker.md` the skills write, plus a scan page that runs jobs-mcp against `targets.yaml`. Next.js + FastAPI + Postgres, `docker compose up`. See [web/README.md](web/README.md).
 
@@ -147,3 +149,5 @@ Both check exactly what `npm publish` would ship. They run the offline checks CI
 ## License
 
 MIT — see [LICENSE](LICENSE).
+
+The section lists in `/linkedin-profile` and `/case-study` started from [Paramchoudhary/ResumeSkills](https://github.com/Paramchoudhary/ResumeSkills) (MIT), rewritten around `facts.md`.
